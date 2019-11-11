@@ -49,6 +49,17 @@ steps:
       - docker tag harbor.zyra.ca/public/zmdocs:$BUILD_TAG harbor.zyra.ca/public/zmdocs:latest
       - docker push harbor.zyra.ca/public/zmdocs:latest
 
+  - name: Push version tagged image
+    <<: *docker-step
+    when:
+      event:
+        - tag
+    commands:
+      - *docker-auth
+      - docker tag harbor.zyra.ca/public/zmdocs:$BUILD_TAG harbor.zyra.ca/public/zmdocs:$DRONE_TAG
+      - docker push harbor.zyra.ca/public/zmdocs:$DRONE_TAG
+
+
   - name: Build binaries
     image: golang:1.12-alpine
     when:
@@ -77,6 +88,6 @@ steps:
         - sha512
 ---
 kind: signature
-hmac: 3cbb60cb2db3499b575c80b6f1b9996ee3f89e4ff40ceb36e7ec3303e6bebbdd
+hmac: 7260f3ddf3577f9b83834a64b587b1cf6e8a5e055b38baef7413283c85f3bae1
 
 ...
