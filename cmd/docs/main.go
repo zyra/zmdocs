@@ -30,18 +30,22 @@ func main() {
 			Aliases: []string{"g"},
 			Usage:   "Generate documentation",
 			Action: func(ctx *cli.Context) error {
-				if pwd, err := os.Getwd(); err != nil {
-					return err
-				} else {
-					configPath := filepath.Join(pwd, ctx.String("config"))
+				configPath := ctx.String("config")
 
-					if p, e := zmdocs.NewParserFromConfig(configPath); e != nil {
-						return fmt.Errorf("unable to parse config: %s", e)
-					} else if e := p.LoadSourceFiles(); e != nil {
-						return fmt.Errorf("unable to load files: %s", e)
-					} else if e := p.Render(); e != nil {
-						return fmt.Errorf("unable to render files: %s", e)
+				if !filepath.IsAbs(configPath) {
+					if pwd, err := os.Getwd(); err != nil {
+						return err
+					} else {
+						configPath = filepath.Join(pwd, configPath)
 					}
+				}
+
+				if p, e := zmdocs.NewParserFromConfig(configPath); e != nil {
+					return fmt.Errorf("unable to parse config: %s", e)
+				} else if e := p.LoadSourceFiles(); e != nil {
+					return fmt.Errorf("unable to load files: %s", e)
+				} else if e := p.Render(); e != nil {
+					return fmt.Errorf("unable to render files: %s", e)
 				}
 				return nil
 			},
