@@ -237,6 +237,13 @@ func (p *Parser) Render() error {
 				Link:  f.Path,
 			}
 
+			if f.Path == "" || f.Path == "/" {
+				if p.Config.BaseURL != "" {
+					ctx.Link = p.Config.BaseURL
+					menuItem = ctx.Link
+				}
+			}
+
 			if f.AddToMenu {
 				if f.MenuGroup != "" {
 					for _, mit := range menuItems {
