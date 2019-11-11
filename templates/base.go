@@ -4,7 +4,7 @@ const BaseTemplate = `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{ .Title }}</title>
+    <title>{{- .Title }}</title>
     {{ if .Description }}<meta name="description" content="{{ .Description }}">{{ end }}
     {{ if .BaseURL }}<base href="{{ .BaseURL }}" />{{ end }}
     <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
@@ -33,28 +33,28 @@ const BaseTemplate = `<!DOCTYPE html>
     <div class="flex">
         <nav class="w-full lg:w-1/5 p-6 hidden lg:block" id="sidenav" role="navigation">
             <ul class="list-reset" role="none">
-                {{ range $index, $element := .MenuItems }}
-                    {{ if $element.Group }}
-                        <li role="none" class="mb-6">
-                            <span class="font-semibold text-gray-500">{{ $element.Title }}</span>
-                            <ul class="list-reset ml-1" role="none">
-                                {{ range $ci, $ce := $element.Items }}
-                                    <li role="none">
-                                        <a href="{{ $ce.Link }}" role="link" aria-label="{{ $ce.Title }}" class="block p-1 {{ if $ce.Active }}text-indigo-600{{ else }}text-gray-600 hover:text-gray-700{{ end }}">{{ $ce.Title }}</a>
-                                    </li>
-                                {{ end }}
-                            </ul>
-                        </li>
-                    {{ else }}
-                        <li role="none">
-                            <a href="{{ $element.Link }}" role="link" aria-label="{{ $element.Title }}" class="block p-1 {{ if $element.Active }}text-indigo-600{{ else }}text-gray-600 hover:text-gray-700{{ end }}">{{ $element.Title }}</a>
-                        </li>
-                    {{ end }}
-                {{ end }}
+{{- range $index, $element := .MenuItems }}
+	{{- if $element.Group }}
+				<li role="none" class="mb-6">
+					<span class="font-semibold text-gray-500">{{ $element.Title }}</span>
+					<ul class="list-reset ml-1" role="none">
+						{{- range $ci, $ce := $element.Items }}
+							<li role="none">
+								<a href="{{ $ce.Link }}" role="link" aria-label="{{ $ce.Title }}" class="block p-1 {{ if $ce.Active }}text-indigo-600{{ else }}text-gray-600 hover:text-gray-700{{ end }}">{{ $ce.Title }}</a>
+							</li>
+						{{- end }}
+					</ul>
+				</li>
+	{{- else }}
+				<li role="none">
+					<a href="{{ $element.Link }}" role="link" aria-label="{{ $element.Title }}" class="block p-1 {{ if $element.Active }}text-indigo-600{{ else }}text-gray-600 hover:text-gray-700{{ end }}">{{ $element.Title }}</a>
+				</li>
+	{{- end }}
+{{- end }}
             </ul>
         </nav>
         <div class="w-full p-6" id="content-container">
-            {{ .Content }}
+		{{ .Content }}
         </div>
     </div>
 </div>
