@@ -94,6 +94,14 @@ func NewParser(config *ParserConfig) *Parser {
 		Logger: l,
 	}
 
+	l.WithFields(logrus.Fields{
+		"rootDir":   config.RootDir,
+		"outDir":    config.OutDir,
+		"baseUrl":   config.BaseURL,
+		"repo":      config.Repo,
+		"siteTitle": config.SiteTitle,
+	}).Debug("creating new parser")
+
 	return &p
 }
 
@@ -188,9 +196,31 @@ type RenderContext struct {
 	Link        string
 }
 
+func (p *Parser) handleHomePage(it *MenuItem) {
+	if it.Group {
+		for _, iit := range it.Items {
+			p.handleHomePage(iit)
+		}
+		return
+	}
+
+	if it.Link == "" || it.Link == "/" {
+		p.Logger.WithFields(logrus.Fields{
+			"title": it.Title,
+		}).Debug("setting page link to baseURL")
+		it.Link = p.Config.BaseURL
+	}
+}
+
 func (p *Parser) Render() error {
 	menuItems := p.Config.MenuItems
 	rndCtxs := make([]*RenderContext, 0)
+
+	if p.Config.BaseURL != "" {
+		for _, it := range menuItems {
+			p.handleHomePage(it)
+		}
+	}
 
 	for _, f := range p.Files {
 		if fc, err := ioutil.ReadFile(f.SourceFile); err != nil {
@@ -229,22 +259,21 @@ func (p *Parser) Render() error {
 				Link:    f.Path,
 			}
 
-			rndCtxs = append(rndCtxs, &ctx)
-
-			menuItem := MenuItem{
-				Name:  f.Name,
-				Title: f.Title,
-				Link:  f.Path,
-			}
-
 			if f.Path == "" || f.Path == "/" {
 				if p.Config.BaseURL != "" {
 					ctx.Link = p.Config.BaseURL
-					menuItem.Link = ctx.Link
 				}
 			}
 
+			rndCtxs = append(rndCtxs, &ctx)
+
 			if f.AddToMenu {
+				menuItem := MenuItem{
+					Name:  f.Name,
+					Title: f.Title,
+					Link:  f.Path,
+				}
+
 				if f.MenuGroup != "" {
 					for _, mit := range menuItems {
 						if mit.Group && mit.Name == f.MenuGroup {
@@ -292,6 +321,11 @@ func (p *Parser) Render() error {
 		ctx.Description = p.Config.Description
 		ctx.MenuItems = menuItems
 		ctx.BaseURL = p.Config.BaseURL
+
+		p.Logger.WithFields(logrus.Fields{
+			"title": ctx.Title,
+			"link":  ctx.Link,
+		}).Debug("rendering page")
 
 		for _, mit := range menuItems {
 			if mit.Group {
