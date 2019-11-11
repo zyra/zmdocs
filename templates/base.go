@@ -19,7 +19,7 @@ const BaseTemplate = `<!DOCTYPE html>
             </span>
         </div>
         <div class="block">
-            <button id="sidenav-open-button" class="flex items-center px-3 py-2 text-indigo-400 hover:text-indigo-500">
+            <button id="sidenav-open-button" class="inline lg:hidden flex items-center px-3 py-2 text-indigo-400 hover:text-indigo-500">
                 <svg class="fill-current h-5 w-5" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><title>Menu</title><path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z"/></svg>
             </button>
             <button id="sidenav-close-button" class="flex items-center px-3 py-2 text-indigo-400 hover:text-indigo-500 hidden">
