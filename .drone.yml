@@ -1,0 +1,72 @@
+---
+kind: pipeline
+type: docker
+name: default
+
+clone:
+  depth: 1
+
+volumes:
+  - name: dockersock
+    host:
+      path: /var/run/docker.sock
+
+x-docker-step: &docker-step
+  image: docker
+  volumes:
+    - name: dockersock
+      path: /var/run/docker.sock
+  environment:
+    BUILD_TAG: ${DRONE_BRANCH}-${DRONE_COMMIT}
+
+steps:
+  - name: Build docker image
+    <<: *docker-step
+    commands:
+      - docker build -t harbor.zyra.ca/public/zmdocs:$BUILD_TAG .
+
+  - name: Push docker image
+    <<: *docker-step
+    commands:
+      - docker push harbor.zyra.ca/public/zmdocs:$BUILD_TAG
+
+  - name: Push latest docker image
+    <<: *docker-step
+    when:
+      branch:
+        - master
+    commands:
+      - docker tag harbor.zyra.ca/public/zmdocs:$BUILD_TAG harbor.zyra.ca/public/zmdocs:latest
+      - docker push harbor.zyra.ca/public/zmdocs:latest
+
+  - name: Build binaries
+    image: golang:1.12-alpine
+    when:
+      event:
+        - tag
+    commands:
+      - apk add git make
+      - make build -j$(nproc)
+
+  - name: Publish binaries to Github
+    image: plugins/github-release
+    when:
+      event:
+        - tag
+    settings:
+      api_key:
+        from_secret: github_secret
+      files:
+        - zmdocs_darwin_amd64
+        - zmdocs_linux_amd64
+        - zmdocs_windows_amd64.exe
+      checksum:
+        - md5
+        - sha1
+        - sha256
+        - sha512
+---
+kind: signature
+hmac: a26e5756bde300343b882cd2063c8757aaf9262530305c9501b34617711ee083
+
+...
