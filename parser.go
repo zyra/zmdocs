@@ -58,6 +58,7 @@ type ParserConfig struct {
 	SiteTitle   string         `yaml:"siteTitle"`
 	Description string         `yaml:"description"`
 	Repo        string         `yaml:"repo"`
+	BaseURL     string         `yaml:"baseUrl"`
 }
 
 type File struct {
@@ -183,6 +184,8 @@ type RenderContext struct {
 	Content     template.HTML
 	OutDir      string
 	OutFile     string
+	BaseURL     string
+	Link        string
 }
 
 func (p *Parser) Render() error {
@@ -223,6 +226,7 @@ func (p *Parser) Render() error {
 				Content: template.HTML(o),
 				OutDir:  outDir,
 				OutFile: outFile,
+				Link:    f.Path,
 			}
 
 			rndCtxs = append(rndCtxs, &ctx)
@@ -280,13 +284,14 @@ func (p *Parser) Render() error {
 		ctx.SiteTitle = p.Config.SiteTitle
 		ctx.Description = p.Config.Description
 		ctx.MenuItems = menuItems
+		ctx.BaseURL = p.Config.BaseURL
 
 		for _, mit := range menuItems {
 			if mit.Group {
 				for _, cmit := range mit.Items {
-					cmit.Active = cmit.Title == ctx.Title
+					cmit.Active = cmit.Link == ctx.Link
 				}
-			} else if mit.Title == ctx.Title {
+			} else if mit.Link == ctx.Link {
 				mit.Active = true
 			} else {
 				mit.Active = false

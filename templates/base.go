@@ -6,6 +6,7 @@ const BaseTemplate = `<!DOCTYPE html>
     <meta charset="UTF-8">
     <title>{{ .Title }}</title>
     {{ if .Description }}<meta name="description" content="{{ .Description }}">{{ end }}
+    {{ if .BaseURL }}<base href="{{ .BaseURL }}" />{{ end }}
     <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#fafafa">
