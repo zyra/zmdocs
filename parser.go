@@ -240,7 +240,7 @@ func (p *Parser) Render() error {
 			if f.Path == "" || f.Path == "/" {
 				if p.Config.BaseURL != "" {
 					ctx.Link = p.Config.BaseURL
-					menuItem = ctx.Link
+					menuItem.Link = ctx.Link
 				}
 			}
 
