@@ -13,3 +13,9 @@ GOOS=windows GOARCH=amd64 go build -mod vendor -ldflags "-X main.AppVersion=${AP
 build_darwin: ; @\
 GOOS=darwin GOARCH=amd64 go build -mod vendor -ldflags "-X main.AppVersion=${APP_VERSION}" -o zmdocs_darwin_amd64 cmd/docs/main.go && \
 chmod +x zmdocs_darwin_amd64
+
+docker_build: ; @\
+docker build -t harbor.zyra.ca/public/zmdocs .
+
+docker_push: ; @\
+docker push harbor.zyra.ca/public/zmdocs
