@@ -18,6 +18,14 @@ x-docker-step: &docker-step
       path: /var/run/docker.sock
   environment:
     BUILD_TAG: ${DRONE_BRANCH}-${DRONE_COMMIT}
+    DOCKER_USERNAME:
+      from_secret: DOCKER_USERNAME
+    DOCKER_PASSWORD:
+      from_secret: DOCKER_PASSWORD
+
+x-docker-auth:
+  - &docker-auth docker login harbor.zyra.ca -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+
 
 steps:
   - name: Build docker image
@@ -28,6 +36,7 @@ steps:
   - name: Push docker image
     <<: *docker-step
     commands:
+      - *docker-auth
       - docker push harbor.zyra.ca/public/zmdocs:$BUILD_TAG
 
   - name: Push latest docker image
@@ -36,6 +45,7 @@ steps:
       branch:
         - master
     commands:
+      - *docker-auth
       - docker tag harbor.zyra.ca/public/zmdocs:$BUILD_TAG harbor.zyra.ca/public/zmdocs:latest
       - docker push harbor.zyra.ca/public/zmdocs:latest
 
@@ -67,6 +77,6 @@ steps:
         - sha512
 ---
 kind: signature
-hmac: a26e5756bde300343b882cd2063c8757aaf9262530305c9501b34617711ee083
+hmac: 3cbb60cb2db3499b575c80b6f1b9996ee3f89e4ff40ceb36e7ec3303e6bebbdd
 
 ...
