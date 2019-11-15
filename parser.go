@@ -79,6 +79,7 @@ func (p *Parser) Renderer() (*Renderer, error) {
 	rnd := &Renderer{
 		MenuItems: p.Config.MenuItems,
 		Contexts:  rndCtxs,
+		Templates: p.Config.Templates,
 	}
 
 	return rnd, nil
