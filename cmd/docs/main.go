@@ -24,6 +24,14 @@ func main() {
 		},
 	}
 
+	app.Before = func(ctx *cli.Context) error {
+		if ctx.Bool("verbose") {
+			_ = os.Setenv("ZMDOCS_DEBUG", "true")
+		}
+
+		return nil
+	}
+
 	app.Commands = []cli.Command{
 		{
 			Name:    "generate",
@@ -40,11 +48,13 @@ func main() {
 					}
 				}
 
-				if p, e := zmdocs.NewParserFromConfig(configPath); e != nil {
+				if p, e := zmdocs.NewParserFromConfigFile(configPath); e != nil {
 					return fmt.Errorf("unable to parse config: %s", e)
 				} else if e := p.LoadSourceFiles(); e != nil {
 					return fmt.Errorf("unable to load files: %s", e)
-				} else if e := p.Render(); e != nil {
+				} else if rnd, e := p.Renderer(); e != nil {
+					return fmt.Errorf("unable to create renderer: %s", e)
+				} else if e := rnd.Render(); e != nil {
 					return fmt.Errorf("unable to render files: %s", e)
 				}
 				return nil

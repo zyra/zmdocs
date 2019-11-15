@@ -36,7 +36,7 @@ const BaseTemplate = `<!DOCTYPE html>
 {{- range $index, $element := .MenuItems }}
 	{{- if $element.Group }}
 				<li role="none" class="mb-6">
-					<span class="font-semibold text-gray-500">{{ $element.Title }}</span>
+					<span class="font-semibold text-gray-400">{{ $element.Title }}</span>
 					<ul class="list-reset ml-1" role="none">
 						{{- range $ci, $ce := $element.Items }}
 							<li role="none">

@@ -9,16 +9,13 @@ import (
 	"text/template"
 )
 
+// Matched file with the file path and the pattern matches
 type PatternMatch struct {
 	Path        string
 	PathMatches [][]string
 }
 
-type PatternLoaderConfig struct {
-	RootDir string
-	Pattern string
-}
-
+// Finds files that match a glob (source) and finds pattern matches on each file
 func GetPatternMatches(source, pattern string) ([]*PatternMatch, error) {
 	if source == "" {
 		return nil, errors.New("source glob is required")
@@ -62,6 +59,7 @@ func GetPatternMatches(source, pattern string) ([]*PatternMatch, error) {
 	return pms, nil
 }
 
+// Constructs a File instance from a pattern match
 func GetFileForPatternMatch(ap *PagePattern, pm *PatternMatch) (*File, error) {
 	if ap == nil {
 		return nil, errors.New("page pattern object cannot be nil")
@@ -89,6 +87,7 @@ func GetFileForPatternMatch(ap *PagePattern, pm *PatternMatch) (*File, error) {
 	return &file, nil
 }
 
+// Utility function to generate a string from a provided Go template
 func stringFromTemplate(t string, pm *PatternMatch) (string, error) {
 	if tmpl, err := template.New("").Parse(t); err != nil {
 		return "", fmt.Errorf("unable to parse template: \n\t%s", err.Error())
