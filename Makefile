@@ -15,7 +15,7 @@ GOOS=darwin GOARCH=amd64 go build -mod vendor -ldflags "-X main.AppVersion=${APP
 chmod +x zmdocs_darwin_amd64
 
 docker_build: ; @\
-docker build -t harbor.zyra.ca/public/zmdocs .
+docker build -t docker.pkg.github.com/zyra/zmdocs/zmdocs .
 
 docker_push: ; @\
-docker push harbor.zyra.ca/public/zmdocs
+docker push docker.pkg.github.com/zyra/zmdocs/zmdocs

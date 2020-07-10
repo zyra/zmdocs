@@ -24,20 +24,20 @@ x-docker-step: &docker-step
       from_secret: DOCKER_PASSWORD
 
 x-docker-auth:
-  - &docker-auth docker login harbor.zyra.ca -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+  - &docker-auth docker login docker.pkg.github.com -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
 
 
 steps:
   - name: Build docker image
     <<: *docker-step
     commands:
-      - docker build -t harbor.zyra.ca/public/zmdocs:$BUILD_TAG .
+      - docker build -t docker.pkg.github.com/zyra/zmdocs/zmdocs:$BUILD_TAG .
 
   - name: Push docker image
     <<: *docker-step
     commands:
       - *docker-auth
-      - docker push harbor.zyra.ca/public/zmdocs:$BUILD_TAG
+      - docker push docker.pkg.github.com/zyra/zmdocs/zmdocs:$BUILD_TAG
 
   - name: Push latest docker image
     <<: *docker-step
@@ -46,8 +46,8 @@ steps:
         - master
     commands:
       - *docker-auth
-      - docker tag harbor.zyra.ca/public/zmdocs:$BUILD_TAG harbor.zyra.ca/public/zmdocs:latest
-      - docker push harbor.zyra.ca/public/zmdocs:latest
+      - docker tag docker.pkg.github.com/zyra/zmdocs/zmdocs:$BUILD_TAG docker.pkg.github.com/zyra/zmdocs/zmdocs:latest
+      - docker push docker.pkg.github.com/zyra/zmdocs/zmdocs:latest
 
   - name: Push version tagged image
     <<: *docker-step
@@ -56,8 +56,8 @@ steps:
         - tag
     commands:
       - *docker-auth
-      - docker tag harbor.zyra.ca/public/zmdocs:$BUILD_TAG harbor.zyra.ca/public/zmdocs:$DRONE_TAG
-      - docker push harbor.zyra.ca/public/zmdocs:$DRONE_TAG
+      - docker tag docker.pkg.github.com/zyra/zmdocs/zmdocs:$BUILD_TAG docker.pkg.github.com/zyra/zmdocs/zmdocs:$DRONE_TAG
+      - docker push docker.pkg.github.com/zyra/zmdocs/zmdocs:$DRONE_TAG
 
 
   - name: Build binaries
@@ -88,6 +88,6 @@ steps:
         - sha512
 ---
 kind: signature
-hmac: 7260f3ddf3577f9b83834a64b587b1cf6e8a5e055b38baef7413283c85f3bae1
+hmac: c399e98d3ff1a3b273c3743447cb6e567eacbcdab9eb597cc94885c7ee82ed42
 
 ...
